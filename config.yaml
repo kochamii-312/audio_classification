@@ -1,0 +1,46 @@
+# 共通設定
+sampling_rate: 22050  # サンプリングレート
+dead_time_sec: 2.0    # 一度検知したら次を検知しない時間
+
+# 抽出設定
+segment:
+  pre_sec: 0.3        # トリガー前の秒数
+  post_sec: 0.7       # トリガー後の秒数
+  threshold: 0.05     # 衝撃検知のしきい値
+
+# メルスペクトログラム設定
+melspec:
+  n_mels: 128         # メルフィルタバンク数
+  fmax: 8000          # ピエゾの有効帯域に合わせた最大周波数 [Hz]
+  hop_length: 256     # STFTホップ長
+  n_fft: 1024         # FFT点数
+  img_size: 224       # ViT/AST 入力サイズ
+
+# ディレクトリ設定
+paths:
+  raw_data_dir: "data/audio/raw"
+  processed_data_dir: "data/audio/processed"
+  spectrogram_dir: "data/spectrograms"
+  model_dir: "models"
+  results_dir: "results"
+
+# オブジェクトリスト（クラス順序 = インデックス順）
+objects:
+  - "metal_nut"
+  - "plastic_bolt"
+  - "sponge"
+  - "rubber_ball"
+  - "wood_block"
+  - "silicon_tube"
+  - "cloth_bundle"
+
+# 学習設定
+train:
+  n_splits: 5           # K-Fold の fold 数
+  epochs: 40            # 総エポック数
+  freeze_epochs: 10     # Phase1（backbone 凍結）のエポック数
+  batch_size: 16        # バッチサイズ（小規模データなので小さめ）
+  lr_head: 1.0e-3       # Phase1（分類ヘッドのみ）の学習率
+  lr_backbone: 1.0e-5   # Phase2（backbone 解凍後）の学習率
+  weight_decay: 1.0e-4  # AdamW の weight decay
+  seed: 42              # 再現性シード
