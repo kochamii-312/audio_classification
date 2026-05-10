@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+
+# Local/generated data
+data/audio/
+data/spectrograms/
+data/video/raw/**/*.LRV
+data/video/raw/**/*.THM
+data/video/raw/*.LRV
+data/video/raw/*.THM
+
+# Training artifacts
+models/
+results/
