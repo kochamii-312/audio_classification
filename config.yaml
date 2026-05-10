@@ -26,13 +26,8 @@ paths:
 
 # オブジェクトリスト（クラス順序 = インデックス順）
 objects:
-  - "metal_nut"
-  - "plastic_bolt"
+  - "block"
   - "sponge"
-  - "rubber_ball"
-  - "wood_block"
-  - "silicon_tube"
-  - "cloth_bundle"
 
 # 学習設定
 train:

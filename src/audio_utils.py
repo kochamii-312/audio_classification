@@ -40,7 +40,7 @@ def extract_grasp_segment(audio, sr, trigger_sample, pre, post):
 
     return segment
 
-def split_grasp_events(y, sr, threshold, dead_time_sec):
+def split_grasp_events(y, sr, threshold, dead_time_sec, pre, post):
     """
     音声全体をスキャンして「掴むイベント」のセグメントリストを返す。
     50ms ごとにRMSを計算し、閾値釣果をトリガーとして切り出す。

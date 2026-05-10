@@ -114,3 +114,7 @@ def main():
         print(f"  → 合計 {segment_offset} セグメント保存\n")
  
     print("完了")
+
+
+if __name__ == "__main__":
+    main()

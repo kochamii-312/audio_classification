@@ -337,20 +337,35 @@ def attention_rollout_vit(model, x, device):
     """
     attn_maps = []
 
+    def pre_hook_fn(module, args, kwargs):
+        # torchvision の EncoderBlock は need_weights=False で呼ぶため、
+        # Attention Rollout 用に head ごとの attention weight を返す設定へ差し替える。
+        kwargs["need_weights"] = True
+        kwargs["average_attn_weights"] = False
+        return args, kwargs
+
     def hook_fn(module, input, output):
-        # output: (B, num_heads, N, N)
-        attn_maps.append(output.detach().cpu())
+        # MultiheadAttention の出力は (attn_output, attn_weights)。
+        attn_weights = output[1] if isinstance(output, tuple) else output
+        if attn_weights is None:
+            raise RuntimeError("Attention weights were not returned from MultiheadAttention.")
+        # attn_weights: (B, num_heads, N, N)
+        attn_maps.append(attn_weights.detach().cpu())
 
     hooks = []
     for layer in model.vit.encoder.layers:
-        h = layer.self_attention.register_forward_hook(hook_fn)
-        hooks.append(h)
+        hooks.append(layer.self_attention.register_forward_pre_hook(pre_hook_fn, with_kwargs=True))
+        hooks.append(layer.self_attention.register_forward_hook(hook_fn))
 
-    with torch.no_grad():
-        model(x.to(device))
+    try:
+        with torch.no_grad():
+            model(x.to(device))
+    finally:
+        for h in hooks:
+            h.remove()
 
-    for h in hooks:
-        h.remove()
+    if not attn_maps:
+        raise RuntimeError("No attention maps were captured.")
 
     # Rollout: 全層のアテンション行列を掛け合わせる
     # shape: (B, num_heads, N, N) → head 方向に平均
