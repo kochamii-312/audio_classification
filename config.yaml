@@ -27,7 +27,12 @@ paths:
 # オブジェクトリスト（クラス順序 = インデックス順）
 objects:
   - "block"
+  - "bottle"
   - "sponge"
+  - "cola"
+  - "hairgel"
+  - "strawberry"
+  - "towel"
 
 # 学習設定
 train:
